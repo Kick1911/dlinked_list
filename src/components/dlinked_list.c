@@ -10,10 +10,11 @@ static dl_node_t* dl_create_node(void* data){
     return n;
 }
 
-dl_list_t* dl_create(){
+dl_list_t* dl_create(void (*free_cb)(void*)){
     dl_list_t* l = (dl_list_t*)malloc(sizeof(dl_list_t));
     if(!l) return NULL;
     l->size = 0;
+    l->free_cb = free_cb;
     l->head = NULL;
     l->end = NULL;
     return l;
@@ -22,8 +23,6 @@ dl_list_t* dl_create(){
 dl_node_t* dl_push(dl_list_t* l, void* data){
     dl_node_t* n = dl_create_node(data);
     if(!n) return NULL;
-    n->data = data;
-    n->next = NULL;
     n->prev = l->end;
     if (n->prev != NULL)
         n->prev->next = n;
@@ -86,6 +85,8 @@ size_t dl_size(dl_list_t* l){
 }
 
 void dl_free(dl_list_t* l){
-    while(dl_pop(l));
+    void* ptr;
+    if(l->free_cb)
+        while( (ptr = dl_pop(l)) ) l->free_cb(ptr);
     free(l);
 }

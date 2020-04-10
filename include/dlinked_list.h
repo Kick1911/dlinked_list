@@ -10,11 +10,12 @@ typedef struct dl_node{
 
 typedef struct{
     size_t size;
+    void (*free_cb)(void*);
     dl_node_t* head;
     dl_node_t* end;
 } dl_list_t;
 
-dl_list_t* dl_create();
+dl_list_t* dl_create(void (*free_cb)(void*));
 dl_node_t* dl_peek(dl_list_t* l);
 dl_node_t* dl_push(dl_list_t* l, void* data);
 void* dl_pop(dl_list_t* l);
