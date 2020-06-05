@@ -1,6 +1,9 @@
 # Binary session
 dlinked_list
 
+include
+*.a.*
+
 # Prerequisites
 *.d
 
