@@ -52,22 +52,6 @@ void* dl_pop(dl_list_t* l){
 	return d;
 }
 
-dl_node_t* dl_head(dl_list_t* l){
-	return l->head;
-}
-
-dl_node_t* dl_peek(dl_list_t* l){
-	return l->end;
-}
-
-dl_node_t* dl_next(dl_node_t* n){
-	return n->next;
-}
-
-void* dl_data(dl_node_t* n){
-	return n->data;
-}
-
 void* dl_pop_head(dl_list_t* l){
 	void* d;
 	dl_node_t* n = l->head;
@@ -95,10 +79,6 @@ void* dl_unlink(dl_list_t* l, dl_node_t* n){
 	l->size--;
 	free(n);
 	return d;
-}
-
-size_t dl_size(dl_list_t* l){
-	return l->size;
 }
 
 void dl_free(dl_list_t* l){

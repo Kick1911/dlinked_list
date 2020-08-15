@@ -15,7 +15,7 @@ static_library: lib${APP_NAME}.a.${VERSION}
 
 lib${APP_NAME}.a.${VERSION}: ${COMP_O} ${UTILS_O}
 	${call print,AR $@}
-	${Q}cd ${LIB_PATH}; ar -x *.a.[0-9].[0-9].[0-9]
+	# ${Q}cd ${LIB_PATH}; ar -x *.a.[0-9].[0-9].[0-9]
 	${Q}ar -cq $@ $^ ${shell find ${LIB_PATH} -name '*.o'}
 
 set_pic:

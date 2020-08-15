@@ -14,15 +14,18 @@ typedef struct{
     dl_node_t* end;
 } dl_list_t;
 
+#define DL_HEAD(l) ((dl_list_t*)(l))->head
+#define DL_PEAK(l) ((dl_list_t*)(l))->end
+#define DL_SIZE(l) ((dl_list_t*)(l))->size
+#define DN_NEXT(n) ((dl_node_t*)(n))->next
+#define DN_PREV(n) ((dl_node_t*)(n))->prev
+#define DN_DATA(n) ((dl_node_t*)(n))->data
+
 dl_list_t* dl_create();
-dl_node_t* dl_head(dl_list_t* l);
-dl_node_t* dl_peek(dl_list_t* l);
-dl_node_t* dl_next(dl_node_t* n);
-void* dl_data(dl_node_t* n);
 dl_node_t* dl_push(dl_list_t* l, void* data);
 void* dl_pop(dl_list_t* l);
 void* dl_unlink(dl_list_t* l, dl_node_t* n);
 void dl_free(dl_list_t* l);
-size_t dl_size(dl_list_t*);
 
 #endif
+
