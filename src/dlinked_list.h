@@ -14,17 +14,35 @@ typedef struct{
     dl_node_t* end;
 } dl_list_t;
 
-#define DL_HEAD(l) ((dl_list_t*)(l))->head
-#define DL_PEAK(l) ((dl_list_t*)(l))->end
-#define DL_SIZE(l) ((dl_list_t*)(l))->size
-#define DN_NEXT(n) ((dl_node_t*)(n))->next
-#define DN_PREV(n) ((dl_node_t*)(n))->prev
-#define DN_DATA(n) ((dl_node_t*)(n))->data
-
+/*
+ * Creates Double linked list.
+ * This function can only fail on malloc.
+ * @return dl_list_t pointer else NULL (malloc failed)
+ */
 dl_list_t* dl_create();
+
+/*
+ * Append to the list
+ * This function can only fail on malloc.
+ * @return Double linked list node else NULL (malloc failed)
+ */
 dl_node_t* dl_push(dl_list_t* l, void* data);
+
+/*
+ * Removes the tail of the list
+ * @return data that was passed into dl_push
+ */
 void* dl_pop(dl_list_t* l);
+
+/*
+ * Removes node from anywhere in the list
+ * @return data that was passed into dl_push
+ */
 void* dl_unlink(dl_list_t* l, dl_node_t* n);
+
+/*
+ * Free the double linked list
+ */
 void dl_free(dl_list_t* l);
 
 #endif
