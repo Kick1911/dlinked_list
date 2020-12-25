@@ -1,10 +1,12 @@
 #include <dlinked_list.h>
 #include <malloc.h>
+#include <errno.h>
 
-static dl_node_t* dl_create_node(void* data){
-    dl_node_t* n = (dl_node_t*)malloc(sizeof(dl_node_t));
+static dl_node_t*
+dl_create_node(void* data){
+    dl_node_t* n = malloc(sizeof(dl_node_t));
 
-    if(!n) return NULL;
+    if(!n){ perror("dl_create failed"); return NULL; }
 
     n->data = data;
     n->next = NULL;
@@ -12,10 +14,12 @@ static dl_node_t* dl_create_node(void* data){
     return n;
 }
 
-dl_list_t* dl_create(){
-    dl_list_t* l = (dl_list_t*)malloc(sizeof(dl_list_t));
-
-    if(!l) return NULL;
+dl_list_t*
+dl_init(dl_list_t* l){
+    if(!l){
+        l = malloc(sizeof(dl_list_t));
+        if(!l){ perror("dl_create failed"); return NULL; }
+    }
 
     l->size = 0;
     l->head = NULL;
@@ -23,7 +27,8 @@ dl_list_t* dl_create(){
     return l;
 }
 
-dl_node_t* dl_push(dl_list_t* l, void* data){
+dl_node_t*
+dl_push(dl_list_t* l, void* data){
     dl_node_t* n = dl_create_node(data);
 
     if(!n) return NULL;
@@ -40,7 +45,8 @@ dl_node_t* dl_push(dl_list_t* l, void* data){
     return n;
 }
 
-void* dl_pop(dl_list_t* l){
+void*
+dl_pop(dl_list_t* l){
     void* d;
     dl_node_t* n = l->end;
 
@@ -58,7 +64,8 @@ void* dl_pop(dl_list_t* l){
     return d;
 }
 
-void* dl_pop_head(dl_list_t* l){
+void*
+dl_pop_head(dl_list_t* l){
     void* d;
     dl_node_t* n = l->head;
 
@@ -73,7 +80,8 @@ void* dl_pop_head(dl_list_t* l){
     return d;
 }
 
-void* dl_unlink(dl_list_t* l, dl_node_t* n){
+void*
+dl_unlink(dl_list_t* l, dl_node_t* n){
     void* d;
     if(l->end == n)
         return dl_pop(l);
@@ -87,6 +95,7 @@ void* dl_unlink(dl_list_t* l, dl_node_t* n){
     return d;
 }
 
-void dl_free(dl_list_t* l){
+void
+dl_free(dl_list_t* l){
     free(l);
 }

@@ -19,7 +19,7 @@ typedef struct{
  * This function can only fail on malloc.
  * @return dl_list_t pointer else NULL (malloc failed)
  */
-dl_list_t* dl_create();
+dl_list_t* dl_init(dl_list_t*);
 
 /*
  * Append to the list
