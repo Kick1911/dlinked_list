@@ -16,11 +16,6 @@ dl_create_node(void* data){
 
 dl_list_t*
 dl_init(dl_list_t* l){
-    if(!l){
-        l = malloc(sizeof(dl_list_t));
-        if(!l){ perror("dl_create failed"); return NULL; }
-    }
-
     l->size = 0;
     l->head = NULL;
     l->end = NULL;
@@ -53,11 +48,11 @@ dl_pop(dl_list_t* l){
     if(!n) return NULL;
 
     d = n->data;
-    if(l->end == l->head)
-        l->head = NULL;
-    else
-        n->prev->next = NULL;
     l->end = n->prev;
+    if(l->end)
+        l->end->next = NULL;
+    else
+        l->head = NULL;
 
     free(n);
     l->size--;
@@ -75,6 +70,8 @@ dl_pop_head(dl_list_t* l){
     l->head = n->next;
     if(l->head)
         l->head->prev = NULL;
+    else
+        l->end = NULL;
     l->size--;
     free(n);
     return d;
@@ -97,5 +94,5 @@ dl_unlink(dl_list_t* l, dl_node_t* n){
 
 void
 dl_free(dl_list_t* l){
-    free(l);
+    while(dl_pop(l));
 }

@@ -3,7 +3,8 @@
 #include <dlinked_list.h>
 #include <malloc.h>
 
-void test_push_pop(){
+void
+test_push_pop(){
     dl_node_t* ptr;
     double f = 3.14, *o, total = 0.0;
     dl_list_t dl;
@@ -30,13 +31,45 @@ void test_push_pop(){
     /* Clean up */
     while(dl_pop(&dl));
     T_ASSERT_NUM(dl.size, 0);
+    T_ASSERT(!dl.head);
+    T_ASSERT(!dl.end);
 }
 
-void unlinking(){
-    int count;
-    dl_node_t* mid, *head, *end, *n2, *n4, *ptr;
-    dl_list_t* dl = dl_init(NULL);
+void
+test_pop_head(){
+    dl_node_t* n2, *n3;
+    double f = 3.14;
+    dl_list_t dl;
 
+    dl_init(&dl);
+
+    dl_push(&dl, &f);
+    n2 = dl_push(&dl, &f);
+    n3 = dl_push(&dl, &f);
+    dl_push(&dl, &f);
+    T_ASSERT(dl.head != dl.end);
+    T_ASSERT_NUM(dl.size, 4);
+
+    dl_pop_head(&dl);
+    dl_pop(&dl);
+    T_ASSERT(dl.head = n2);
+    T_ASSERT(dl.end = n3);
+    T_ASSERT_NUM(dl.size, 2);
+
+    while(dl_pop_head(&dl));
+    T_ASSERT_NUM(dl.size, 0);
+    T_ASSERT(!dl.head);
+    T_ASSERT(!dl.end);
+}
+
+void
+unlinking(){
+    int count;
+    dl_list_t* dl;
+    dl_node_t* mid, *head, *end, *n2, *n4, *ptr;
+
+    dl = malloc(sizeof(*dl));
+    dl_init(dl);
     head = dl_push(dl, (void*)1);
     n2 = dl_push(dl, (void*)2);
     mid = dl_push(dl, (void*)3);
@@ -72,13 +105,16 @@ void unlinking(){
     /* Clean up */
     while(dl_pop(dl));
     T_ASSERT_NUM(dl->size, 0);
-    dl_free(dl);
+    T_ASSERT(!dl->head);
+    T_ASSERT(!dl->end);
+    free(dl);
 }
 
 int main(void){
     T_SUITE(Double Linked List,
         TEST(Push and pop, test_push_pop());
         TEST(Unlinking, unlinking());
+        TEST(Pop head to tail, test_pop_head());
     );
     T_CONCLUDE();
     return 0;
