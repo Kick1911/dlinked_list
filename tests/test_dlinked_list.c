@@ -1,7 +1,10 @@
 #include <unitest.h>
 #include <stdio.h>
-#include <dlinked_list.h>
+#include <unistd.h>
 #include <malloc.h>
+#include <pthread.h>
+#include <dlinked_list.h>
+#include <utils/lock.h>
 
 void
 test_push_pop(){
@@ -111,11 +114,43 @@ unlinking(){
     free(dl);
 }
 
+void*
+thread(void* arg){
+    dl_list_t* l = arg;
+    mutex_lock(l);
+    sleep(5);
+    mutex_unlock(l);
+    return NULL;
+}
+
+void
+test_mutex(){
+    double f = 3.14;
+    pthread_t t;
+    dl_list_t* l;
+
+    l = malloc(sizeof(*l));
+    dl_init(l);
+
+    pthread_create(&t, NULL, thread, l);
+    sleep(1);
+
+    T_ASSERT_NUM(l->lock, 1);
+    mutex_lock(l);
+    pthread_join(t, NULL);
+    mutex_unlock(l);
+    T_ASSERT_NUM(l->lock, 0);
+
+    dl_free(l);
+    free(l);
+}
+
 int main(void){
     T_SUITE(Double Linked List,
         TEST(Push and pop, test_push_pop());
         TEST(Unlinking, unlinking());
         TEST(Pop head to tail, test_pop_head());
+        TEST(Mutex lock, test_mutex());
     );
     T_CONCLUDE();
     return 0;

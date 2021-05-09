@@ -9,6 +9,7 @@ typedef struct dl_node{
 } dl_node_t;
 
 typedef struct{
+    int lock;
     size_t size;
     dl_node_t* head;
     dl_node_t* end;

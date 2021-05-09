@@ -1,6 +1,7 @@
-#include <dlinked_list.h>
 #include <malloc.h>
 #include <errno.h>
+#include <dlinked_list.h>
+#include <utils/lock.h>
 
 static dl_node_t*
 dl_create_node(void* data){
@@ -16,6 +17,7 @@ dl_create_node(void* data){
 
 dl_list_t*
 dl_init(dl_list_t* l){
+    l->lock = 0;
     l->size = 0;
     l->head = NULL;
     l->end = NULL;
@@ -24,8 +26,10 @@ dl_init(dl_list_t* l){
 
 dl_node_t*
 dl_push(dl_list_t* l, void* data){
-    dl_node_t* n = dl_create_node(data);
+    dl_node_t* n;
 
+    mutex_lock(l);
+    n = dl_create_node(data);
     if(!n) return NULL;
 
     n->data = data;
@@ -37,6 +41,7 @@ dl_push(dl_list_t* l, void* data){
         l->head = n;
     l->end = n;
     l->size++;
+    mutex_unlock(l);
     return n;
 }
 
@@ -47,6 +52,8 @@ dl_pop(dl_list_t* l){
 
     if(!n) return NULL;
 
+    mutex_lock(l);
+
     d = n->data;
     l->end = n->prev;
     if(l->end)
@@ -56,6 +63,7 @@ dl_pop(dl_list_t* l){
 
     free(n);
     l->size--;
+    mutex_unlock(l);
     return d;
 }
 
@@ -66,6 +74,8 @@ dl_pop_head(dl_list_t* l){
 
     if(!n) return NULL;
 
+    mutex_lock(l);
+
     d = n->data;
     l->head = n->next;
     if(l->head)
@@ -74,6 +84,7 @@ dl_pop_head(dl_list_t* l){
         l->end = NULL;
     l->size--;
     free(n);
+    mutex_unlock(l);
     return d;
 }
 
@@ -84,11 +95,13 @@ dl_unlink(dl_list_t* l, dl_node_t* n){
         return dl_pop(l);
     if(l->head == n)
         return dl_pop_head(l);
+    mutex_lock(l);
     d = n->data;
     n->prev->next = n->next;
     n->next->prev = n->prev;
     l->size--;
     free(n);
+    mutex_unlock(l);
     return d;
 }
 
