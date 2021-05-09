@@ -37,7 +37,7 @@ test_push_pop(){
 
 void
 test_pop_head(){
-    dl_node_t* n2, *n3;
+    dl_node_t* n2, *n4;
     double f = 3.14;
     dl_list_t dl;
 
@@ -45,16 +45,17 @@ test_pop_head(){
 
     dl_push(&dl, &f);
     n2 = dl_push(&dl, &f);
-    n3 = dl_push(&dl, &f);
+    dl_push(&dl, &f);
     dl_push(&dl, &f);
     T_ASSERT(dl.head != dl.end);
     T_ASSERT_NUM(dl.size, 4);
 
     dl_pop_head(&dl);
+    n4 = dl_push(&dl, &f);
     dl_pop(&dl);
     T_ASSERT(dl.head = n2);
-    T_ASSERT(dl.end = n3);
-    T_ASSERT_NUM(dl.size, 2);
+    T_ASSERT(dl.end = n4);
+    T_ASSERT_NUM(dl.size, 3);
 
     while(dl_pop_head(&dl));
     T_ASSERT_NUM(dl.size, 0);
